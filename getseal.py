@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import PIL.Image as Image
 import sys, getopt
-import time
+import time, os
+import utils
 
 def transparent_back(img):
     img = img.convert('RGBA')
@@ -44,26 +45,28 @@ def action(inputfile, outputfile):
   img1=transparent_back(img1)
   img1.save(outputfile)
 
-if __name__ == "__main__":
-  inputfile = ''
-  outputfile = ''
-  argv = sys.argv[1:]
-  try:
-    opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
-  except getopt.GetoptError:
-    print(' -i <inputfile> -o <outputfile>')
-    sys.exit(2)
-  for opt, arg in opts:
-    if opt == '-h':
-        print(' -i <inputfile> -o <outputfile>')
-        sys.exit()
-    elif opt in ("-i", "--ifile"):
-        inputfile = arg
-    elif opt in ("-o", "--ofile"):
-        outputfile = arg
-  start = time.time()
-  action(inputfile, outputfile)
-  end = time.time()
-  print("耗时: "+str(end-start))
+def main(input_pdf, output_img_folder, pages=None):
+  # pdf to imgs
+  img_folder_name = os.path.basename(input_pdf).split(".")[0].replace(" ", "_")
+  img_folder_fullpath = os.path.join(output_img_folder, img_folder_name)
+  images = utils.Utils.pdf2image(
+    sourcefile=input_pdf, 
+    img_target_folder=img_folder_fullpath,
+    pages=pages
+  )
+  for img in os.listdir(img_folder_fullpath):
+    img_path = os.path.join(img_folder_fullpath, img)
+    
+    start = time.time()
+    outputfilename = "{}__{}".format("seal", os.path.basename(img_path))
+    outputfile = os.path.join(img_folder_fullpath, outputfilename)
+    action(img_path, outputfile)
+    end = time.time()
+    print("cost time: {} seconds....".format(str(end-start)))
 
+
+if __name__ == "__main__":
+  inputfile = r"C:\Users\songm28\Pfizer\Downloads\artwork_10ml_no.pdf"
+  output_img_folder = os.path.join("imgs")
+  main(input_pdf=inputfile, output_img_folder=output_img_folder, pages=[0])
 

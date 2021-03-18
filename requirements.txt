@@ -1,0 +1,5 @@
+fitz
+PyPDF2
+Pillow
+PyMuPDF==1.16.14
+opencv-python
