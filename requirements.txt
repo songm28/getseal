@@ -1,5 +1,5 @@
 fitz
 PyPDF2
 Pillow
-PyMuPDF==1.16.14
+PyMuPDF
 opencv-python
