@@ -54,16 +54,19 @@ def extract_rgb(inputfile):
   return img
 
 def save_rgb_to_file(img_rgb, outputfile):
-  if img_rgb.min() == 0:
+  right_bottom_rgb=img_rgb[int(img_rgb.shape[0]/2):,int(img_rgb.shape[1]/2):,:]
+  if right_bottom_rgb.min() == 255:
     # blank image
     print("blank pages")
+    if os.path.exists(outputfile): os.remove(outputfile)
     return False
-  cv2.imwrite(outputfile, img_rgb, [int(cv2.IMWRITE_PNG_COMPRESSION), 9])
+  cv2.imwrite(outputfile, right_bottom_rgb, [int(cv2.IMWRITE_PNG_COMPRESSION), 9])
 
 def main(input_pdf, output_img_folder, pages=None):
   # pdf to imgs
   img_folder_name = os.path.basename(input_pdf).split(".")[0].replace(" ", "_")
   img_folder_fullpath = os.path.join(output_img_folder, img_folder_name)
+  # img_folder_fullpath = os.path.join(output_img_folder)
   images = utils.Utils.pdf2image(
     sourcefile=input_pdf, 
     img_target_folder=img_folder_fullpath,
@@ -73,18 +76,19 @@ def main(input_pdf, output_img_folder, pages=None):
     img_path = os.path.join(img_folder_fullpath, img)
     
     start = time.time()
-    outputfilename = "{}__{}".format("seal", os.path.basename(img_path))
-    outputfile = os.path.join(img_folder_fullpath, outputfilename)
+    outputfilename = "{}__{}_{}".format("seal", img_folder_name, os.path.basename(img_path))
+    outputfile = os.path.join(output_img_folder, outputfilename)
     # action(img_path, outputfile)
     img_rgb=extract_rgb(img_path)
     save_rgb_to_file(img_rgb=img_rgb, outputfile=outputfile)
     end = time.time()
-    print("cost time: {} seconds....".format(str(end-start)))
+    print("cost time to process {}: {} seconds....".format( img_path, str(end-start)))
 
 
 if __name__ == "__main__":
   inputfile = "artwork_10ml_no.pdf"
   # inputfile = "artwork125.pdf"
   output_img_folder = os.path.join("imgs")
+  utils.Utils.empty_folder(output_img_folder)
   main(input_pdf=inputfile, output_img_folder=output_img_folder, pages=[0])
 

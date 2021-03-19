@@ -24,7 +24,7 @@ class Utils():
             return base64_data.decode('utf-8')
 
     @staticmethod        
-    def __empty_folder(folderfullpath):
+    def empty_folder(folderfullpath):
         """Empty content from a folder.
 
         if the content is a file, remove the file
@@ -60,7 +60,7 @@ class Utils():
                 print('Folder[{}] is not a folder, Please double check'.format(img_target_folder))
                 return 
                 
-        Utils.__empty_folder(img_target_folder)
+        Utils.empty_folder(img_target_folder)
         doc = fitz.open(sourcefile)
         print(doc.pageCount)
         page_list = [x for x in range(doc.pageCount)]
@@ -137,7 +137,7 @@ class Utils():
     #             print('Folder[{}] is not a folder, Please double check'.format(img_target_folder))
     #             return 
 
-    #     Utils.__empty_folder(img_target_folder)
+    #     Utils.empty_folder(img_target_folder)
     #     pages = 0
     #     with open(sourcefile, 'rb') as f:
     #         pages = PyPDF2.PdfFileReader(f).getNumPages()
